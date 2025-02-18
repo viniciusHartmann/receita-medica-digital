@@ -5,6 +5,7 @@ import {
 } from '@ant-design/icons';
 import 'antd/dist/reset.css';
 import './App.css';
+import NewRecipe from './pages/LayoutPages';
 
 const { Sider, Content } = Layout;
 
@@ -12,9 +13,19 @@ function App() {
   const [page, setPage] = useState('Home');
   const [collapsed, setCollapsed] = useState(true);
 
-  const handleMenuClick = (e) => {
+  const handleMenuClick = (e: any) => {
     setPage(e.key);
     setCollapsed(prev => !prev);
+  };
+
+  // Função para renderizar a página correspondente
+  const renderPage = () => {
+    switch (page) {
+      case 'Nova Receita':
+        return <NewRecipe />;
+      default:
+        return <h1>Página não encontrada</h1>;
+    }
   };
 
   return (
@@ -25,12 +36,12 @@ function App() {
         </div>
         <Menu theme="dark" mode="inline" defaultSelectedKeys={['Nova Receita']} onClick={handleMenuClick}>
           <Menu.Item key="Nova Receita" icon={<FileAddTwoTone />}>Nova Receita</Menu.Item>
+          <Menu.Item key="Receitas" icon={<FileAddTwoTone />}>Receitas</Menu.Item>
         </Menu>
       </Sider>
       <Layout>
         <Content style={{ padding: '20px' }}>
-          <h1>{page}</h1>
-          <p>Welcome to the {page} page.</p>
+          {renderPage()}
         </Content>
       </Layout>
     </Layout>
