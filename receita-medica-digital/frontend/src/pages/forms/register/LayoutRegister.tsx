@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Table, Modal, Form, Input, Select, DatePicker, FloatButton } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { RegistrationForm } from "./registerform";
 
-interface Cadastro {
+export interface Cadastro {
 	tutor: string,
-	telefone: number,
+	telefone: string,
 	paciente: string,
 	sexo: string,
 	especie: string,
@@ -22,10 +22,14 @@ const PatientTable = () => {
 		{ tutor: 'Mirian', telefone: '49 98429-9161', paciente: 'Hurley', sexo: 'Fêmea', especie: 'Gato', raca: 'Praiana', nascimento: '19/02/2018' },
 	]);
 
-	const handleCreate = values => {
-		setData([...data, { key: data.length, ...values }]);
+	const handleCreate = (values: Cadastro) => {
+		setData([...data, values]);
 		setVisible(false);
 	};
+
+	useEffect(() => {
+		setData(Array(100).fill({ tutor: 'Vinicius', telefone: '49 98429-9161', paciente: 'Max', sexo: 'Macho', especie: 'Cachorro', raca: 'vira lata', nascimento: '19/02/2015' }))
+	}, [])
 
 	const columns = [
 		{ title: "Tutor", dataIndex: "tutor", key: "tutor" },
@@ -39,8 +43,8 @@ const PatientTable = () => {
 	return (
 		<>
 			<h1>Cadastro de Pacientes</h1>
-			<Table columns={columns} dataSource={data} pagination={{ pageSize: 5 }} />
-			<FloatButton icon={<PlusOutlined />} type="primary" onClick={() => setVisible(true)} style={{ right: 24, bottom: 24 }} />
+			<Table columns={columns} dataSource={data} pagination={{ pageSize: 20 }} />
+			<FloatButton icon={<PlusOutlined />} type="primary" onClick={() => setVisible(true)} />
 			<RegistrationForm visible={visible} onCreate={handleCreate} onCancel={() => setVisible(false)} />
 		</>
 	);
