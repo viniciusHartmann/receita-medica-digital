@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Button, Drawer } from 'antd';
 import {
+  MenuOutlined,
   FileAddTwoTone,
   SafetyOutlined
 } from '@ant-design/icons';
@@ -8,58 +9,16 @@ import 'antd/dist/reset.css';
 import './App.css';
 import { NewRecipe } from './pages/forms/recipes/LayoutRecipe';
 import RegistrationForm from './pages/forms/register/LayoutRegister';
-const { Sider, Content } = Layout;
 
-//Parte de autenticação com google
-// import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-// import { auth } from './services/firebase';
-// export function SingIn() {
-//   const provider = new GoogleAuthProvider();
-//   provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
-//   provider.setCustomParameters({
-//     'login_hint': 'user@example.com'
-//   });
-
-//   function makeLogin() {
-
-//     signInWithPopup(auth, provider)
-//       .then((result) => {
-//         // This gives you a Google Access Token. You can use it to access the Google API.
-//         const credential = GoogleAuthProvider.credentialFromResult(result);
-//         const token = credential?.accessToken;
-//         // The signed-in user info.
-//         const user = result.user;
-//         // IdP data available using getAdditionalUserInfo(result)
-//         // ...
-//       }).catch((error) => {
-//         // Handle Errors here.
-//         const errorCode = error.code;
-//         const errorMessage = error.message;
-//         // The email of the user's account used.
-//         const email = error.customData.email;
-//         // The AuthCredential type that was used.
-//         const credential = GoogleAuthProvider.credentialFromError(error);
-//         // ...
-//       });
-//   }
-
-//   return (
-//     <div>
-//       <button onClick={makeLogin}>
-//         <span>Login com o Google</span>
-//       </button>
-//     </div>
-//   )
-// }
-
+const { Content } = Layout;
 
 export function App() {
   const [page, setPage] = useState('Home');
-  const [collapsed, setCollapsed] = useState(true);
+  const [open, setOpen] = useState(false);
 
   const handleMenuClick = (e: any) => {
     setPage(e.key);
-    setCollapsed(prev => !prev);
+    setOpen(false); // Fecha o menu ao selecionar uma opção
   };
 
   // Função para renderizar a página correspondente
@@ -68,7 +27,13 @@ export function App() {
       case 'Receitas':
         return <NewRecipe />;
       case 'Cadastros':
-        return <RegistrationForm />
+        return <RegistrationForm />;
+      case 'Home':
+        return (
+          <div style={{ textAlign: 'center', fontSize: '24px', fontWeight: 'bold', marginTop: '20%' }}>
+            Bem-vindo!
+          </div>
+        );
       default:
         return <h1>Página não encontrada</h1>;
     }
@@ -76,15 +41,31 @@ export function App() {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider collapsed={collapsed} trigger={null} collapsible>
-        <div className="logo" style={{ color: 'white', textAlign: 'center', padding: '10px' }}>
-          Logo
-        </div>
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={['Nova Receita']} onClick={handleMenuClick}>
+      <Button
+        type="primary"
+        icon={<MenuOutlined />}
+        onClick={() => setOpen(true)}
+        style={{
+          position: 'fixed',
+          top: 20,
+          left: 20,
+          zIndex: 1000
+        }}
+      />
+
+      <Drawer
+        title="Menu"
+        placement="left"
+        onClose={() => setOpen(false)}
+        open={open}
+      >
+        <Menu mode="vertical" defaultSelectedKeys={['Home']} onClick={handleMenuClick}>
+          <Menu.Item key="Home">Home</Menu.Item>
           <Menu.Item key="Cadastros" icon={<SafetyOutlined />}>Cadastros</Menu.Item>
           <Menu.Item key="Receitas" icon={<FileAddTwoTone />}>Receitas</Menu.Item>
         </Menu>
-      </Sider>
+      </Drawer>
+
       <Layout>
         <Content style={{ padding: '20px' }}>
           {renderPage()}
@@ -93,4 +74,3 @@ export function App() {
     </Layout>
   );
 }
-

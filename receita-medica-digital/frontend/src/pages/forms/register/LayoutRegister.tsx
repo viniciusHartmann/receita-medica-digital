@@ -6,6 +6,13 @@ import { RegistrationForm } from "./registerform";
 export interface Cadastro {
 	tutor: string,
 	telefone: string,
+	cep: number,
+	rua: string,
+	cidade: string,
+	uf: string,
+	bairro: string,
+	complemento: string,
+	numeroEnd: string,
 	paciente: string,
 	sexo: string,
 	especie: string,
@@ -17,9 +24,9 @@ const PatientTable = () => {
 	const [visible, setVisible] = useState(false);
 
 	const [data, setData] = useState<Cadastro[]>([
-		{ tutor: 'Vinicius', telefone: '49 98429-9161', paciente: 'Max', sexo: 'Macho', especie: 'Cachorro', raca: 'vira lata', nascimento: '19/02/2015' },
-		{ tutor: 'Ana', telefone: '49 98429-9161', paciente: 'Noah', sexo: 'Macho', especie: 'Cachorro', raca: 'Pitbull', nascimento: '19/02/2020' },
-		{ tutor: 'Mirian', telefone: '49 98429-9161', paciente: 'Hurley', sexo: 'Fêmea', especie: 'Gato', raca: 'Praiana', nascimento: '19/02/2018' },
+		{ tutor: 'Vinicius', telefone: '49 98429-9161', cep: 89705470, rua: 'Emilia Simioni', cidade: 'Concórdia', uf: 'SC', bairro: 'Poente do Sol', complemento: 't', paciente: 'Max', sexo: 'Macho', especie: 'Cachorro', raca: 'vira lata', nascimento: '19/02/2015' },
+		{ tutor: 'Ana', telefone: '49 98429-9161', cep: 89705470, rua: 'Emilia Simioni', cidade: 'Concórdia', uf: 'SC', bairro: 'Poente do Sol', complemento: 't', paciente: 'Noah', sexo: 'Macho', especie: 'Cachorro', raca: 'Pitbull', nascimento: '19/02/2020' },
+		{ tutor: 'Mirian', telefone: '49 98429-9161', cep: 89705470, rua: 'Emilia Simioni', cidade: 'Concórdia', uf: 'SC', bairro: 'Poente do Sol', complemento: 't', paciente: 'Hurley', sexo: 'Fêmea', especie: 'Gato', raca: 'Praiana', nascimento: '19/02/2018' },
 	]);
 
 	const handleCreate = (values: Cadastro) => {
@@ -28,7 +35,7 @@ const PatientTable = () => {
 	};
 
 	useEffect(() => {
-		setData(Array(100).fill({ tutor: 'Vinicius', telefone: '49 98429-9161', paciente: 'Max', sexo: 'Macho', especie: 'Cachorro', raca: 'vira lata', nascimento: '19/02/2015' }))
+		setData(Array(100).fill({ tutor: 'Vinicius', telefone: '49 98429-9161', cep: 89705470, rua: 'Emilia Simioni', cidade: 'Concórdia', uf: 'SC', bairro: 'Poente do Sol', complemento: 't', paciente: 'Max', sexo: 'Macho', especie: 'Cachorro', raca: 'vira lata', nascimento: '19/02/2015' }))
 	}, [])
 
 	const columns = [
@@ -42,7 +49,9 @@ const PatientTable = () => {
 
 	return (
 		<>
-			<h1>Cadastro de Pacientes</h1>
+			<h1 style={{ textAlign: 'center', fontSize: '24px', fontWeight: 'bold' }}>
+				Cadastro de Pacientes
+			</h1>
 			<Table columns={columns} dataSource={data} pagination={{ pageSize: 20 }} />
 			<FloatButton icon={<PlusOutlined />} type="primary" onClick={() => setVisible(true)} />
 			<RegistrationForm visible={visible} onCreate={handleCreate} onCancel={() => setVisible(false)} />

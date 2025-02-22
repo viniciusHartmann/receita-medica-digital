@@ -110,7 +110,9 @@ export const NewRecipe: React.FC = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Receitas Digitais</h1>
+      <h1 style={{ textAlign: 'center', fontSize: '24px', fontWeight: 'bold' }}>
+        Receitas Digitais
+      </h1>
 
       {/* Tabela de receitas */}
       <Table dataSource={receitas} columns={columns} rowKey="id" pagination={false} />
