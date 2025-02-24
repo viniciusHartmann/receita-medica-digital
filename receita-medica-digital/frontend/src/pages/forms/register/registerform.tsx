@@ -1,6 +1,7 @@
 import { Table, Modal, Form, Input, Select, DatePicker, Space, Row, Col, Button, message, Tabs } from "antd";
 import React, { FC, ReactElement, useEffect, useState } from "react";
 import { Cadastro } from "./LayoutRegister";
+import { FormInstance } from "antd/lib";
 
 interface RegistrationFormProps {
 	visible: boolean;
@@ -9,8 +10,10 @@ interface RegistrationFormProps {
 }
 
 export const RegistrationForm: FC<RegistrationFormProps> = ({ visible, onCancel, onCreate }): ReactElement => {
-	const [form] = Form.useForm<Cadastro>();
+	const [formTutor] = Form.useForm<Cadastro>();
+	const [formPaciente] = Form.useForm<Cadastro>();
 	const [activeTab, setActiveTab] = useState("tutor");
+	const [messageApi, contextHolder] = message.useMessage();
 
 	const handleTelefoneChange = (e) => {
 		let value = e.target.value.replace(/\D/g, ''); // Remove tudo o que não for número
@@ -21,7 +24,7 @@ export const RegistrationForm: FC<RegistrationFormProps> = ({ visible, onCancel,
 		} else {
 			value = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7, 11)}`;
 		}
-		form.setFieldsValue({ telefone: value });
+		formTutor.setFieldsValue({ telefone: value });
 	};
 
 	const handleCepChange = (e) => {
@@ -30,7 +33,7 @@ export const RegistrationForm: FC<RegistrationFormProps> = ({ visible, onCancel,
 		if (value.length > 5) {
 			value = `${value.slice(0, 5)}-${value.slice(5, 8)}`;
 		}
-		form.setFieldsValue({ cep: value });
+		formTutor.setFieldsValue({ cep: value });
 	}
 
 	const checkCep = (e) => {
@@ -38,10 +41,12 @@ export const RegistrationForm: FC<RegistrationFormProps> = ({ visible, onCancel,
 		fetch(`https://viacep.com.br/ws/${cep}/json/`)
 			.then(res => res.json()).then(data => {
 				if (data.erro) {
-					message.error('CEP inválido!'); // Exibe o popup de erro
+					messageApi.error({
+						content: 'CEP inválido!',
+					});
 					return;
 				}
-				form.setFieldsValue({
+				formTutor.setFieldsValue({
 					rua: data.logradouro,
 					cidade: data.localidade,
 					uf: data.uf,
@@ -53,26 +58,47 @@ export const RegistrationForm: FC<RegistrationFormProps> = ({ visible, onCancel,
 			});;
 	}
 
-	const handleSubmit = (values: Cadastro) => {
-		console.log(values)
+	const checkFormIsValid = async (form: FormInstance): Promise<boolean> => {
+		try {
+			await form.validateFields()
+			return true
+		} catch (error) {
+			return false
+		}
+	}
+
+	const handleSubmit = async () => {
+		if (!await checkFormIsValid(formTutor)) { return setActiveTab('tutor'); }
+
+		if (!await checkFormIsValid(formPaciente)) { return setActiveTab('paciente') }
+
+
+		const values: Cadastro = {
+			...formTutor.getFieldsValue(),
+			...formPaciente.getFieldsValue()
+		}
 		onCreate(values)
-		form.resetFields()
+		formTutor.resetFields()
+
 	}
 
 	const handleCancel = () => {
 		onCancel()
-		form.resetFields()
+		formTutor.resetFields()
+		formPaciente.resetFields()
 	}
 
 	useEffect(() => {
-		form.resetFields()
+		formTutor.resetFields();
+		formPaciente.resetFields()
 	}, [])
 	return (
 		<Modal open={visible} title="Cadastro de Paciente" onCancel={handleCancel} footer={null}>
-			<Form form={form} layout="vertical" onFinish={handleSubmit}>
-				<Tabs activeKey={activeTab} onChange={setActiveTab}>
-					{/* ABA TUTOR */}
-					<Tabs.TabPane tab="Tutor" key="tutor">
+			{contextHolder}
+			<Tabs activeKey={activeTab} onChange={setActiveTab}>
+				{/* ABA TUTOR */}
+				<Tabs.TabPane tab="Tutor" key="tutor">
+					<Form form={formTutor} layout="vertical">
 						<Row gutter={10}>
 							<Col xs={24} md={12}>
 								<Form.Item name="tutor" label="Tutor" rules={[{ required: true, message: "Insira o nome do tutor" }]}>
@@ -130,7 +156,7 @@ export const RegistrationForm: FC<RegistrationFormProps> = ({ visible, onCancel,
 										inputMode="numeric"
 										onChange={(e) => {
 											const value = e.target.value.replace(/\D/g, ""); // Remove tudo que não for número
-											form.setFieldsValue({ numeroEnd: value });
+											formTutor.setFieldsValue({ numeroEnd: value });
 										}}
 									/>
 								</Form.Item>
@@ -142,10 +168,12 @@ export const RegistrationForm: FC<RegistrationFormProps> = ({ visible, onCancel,
 								</Form.Item>
 							</Col>
 						</Row>
-					</Tabs.TabPane>
+					</Form>
+				</Tabs.TabPane>
 
-					{/* ABA PACIENTE */}
-					<Tabs.TabPane tab="Paciente" key="paciente">
+				{/* ABA PACIENTE */}
+				<Tabs.TabPane tab="Paciente" key="paciente" forceRender>
+					<Form form={formPaciente} layout="vertical">
 						<Row gutter={10}>
 							<Col span={24}>
 								<Form.Item name="paciente" label="Nome Paciente" rules={[{ required: true, message: "Insira o nome do paciente" }]}>
@@ -180,22 +208,20 @@ export const RegistrationForm: FC<RegistrationFormProps> = ({ visible, onCancel,
 								</Form.Item>
 							</Col>
 						</Row>
-					</Tabs.TabPane>
-				</Tabs>
+					</Form>
+				</Tabs.TabPane>
+			</Tabs>
 
-				{/* BOTÕES */}
-				<Row justify="end" gutter={10}>
-					<Col>
-						<Button onClick={handleCancel}>Cancelar</Button>
-					</Col>
-					<Col>
-						<Button type="primary" htmlType="submit">Enviar</Button>
-					</Col>
-					<Col>
-						<Button onClick={() => message.error('Teste de erro')}>Testar Popup</Button>
-					</Col>
-				</Row>
-			</Form>
+			{/* BOTÕES */}
+			<Row justify="end" gutter={10}>
+				<Col>
+					<Button onClick={handleCancel}>Cancelar</Button>
+				</Col>
+				<Col>
+					<Button type="primary" onClick={handleSubmit}>Enviar</Button>
+				</Col>
+			</Row>
+
 		</Modal>
 	);
 };
