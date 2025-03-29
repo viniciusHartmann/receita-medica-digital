@@ -35,7 +35,7 @@ const PatientTable = () => {
 	};
 
 	useEffect(() => {
-		setData(Array(100).fill({ tutor: 'Vinicius', telefone: '49 98429-9161', cep: 89705470, rua: 'Emilia Simioni', cidade: 'Concórdia', uf: 'SC', bairro: 'Poente do Sol', complemento: 't', paciente: 'Max', sexo: 'Macho', especie: 'Cachorro', raca: 'vira lata', nascimento: '19/02/2015' }))
+		setData(Array(10).fill({ tutor: 'Vinicius', telefone: '49 98429-9161', cep: 89705470, rua: 'Emilia Simioni', cidade: 'Concórdia', uf: 'SC', bairro: 'Poente do Sol', complemento: 't', paciente: 'Max', sexo: 'Macho', especie: 'Cachorro', raca: 'vira lata', nascimento: '19/02/2015' }))
 	}, [])
 
 	const columns = [

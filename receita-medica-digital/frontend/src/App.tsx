@@ -3,12 +3,14 @@ import { Layout, Menu, Button, Drawer } from 'antd';
 import {
   MenuOutlined,
   FileAddTwoTone,
-  SafetyOutlined
+  SafetyOutlined,
+  CalendarOutlined
 } from '@ant-design/icons';
 import 'antd/dist/reset.css';
 import './App.css';
 import { NewRecipe } from './pages/forms/recipes/LayoutRecipe';
 import RegistrationForm from './pages/forms/register/LayoutRegister';
+import CalendarGrid from './pages/forms/calendar/LayoutCalendar';
 
 const { Content } = Layout;
 
@@ -28,6 +30,8 @@ export function App() {
         return <NewRecipe />;
       case 'Cadastros':
         return <RegistrationForm />;
+      case 'Calendario':
+        return <CalendarGrid />;
       case 'Home':
         return (
           <div style={{ textAlign: 'center', fontSize: '24px', fontWeight: 'bold', marginTop: '20%' }}>
@@ -63,6 +67,7 @@ export function App() {
           <Menu.Item key="Home">Home</Menu.Item>
           <Menu.Item key="Cadastros" icon={<SafetyOutlined />}>Cadastros</Menu.Item>
           <Menu.Item key="Receitas" icon={<FileAddTwoTone />}>Receitas</Menu.Item>
+          <Menu.Item key="Calendario" icon={<CalendarOutlined />}>Calendário</Menu.Item>
         </Menu>
       </Drawer>
 
